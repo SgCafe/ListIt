@@ -2,13 +2,157 @@
 <ContentPage
     x:Class="ListIt.Views.ProductPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Converters="clr-namespace:ListIt.Converters"
+    xmlns:models="clr-namespace:ListIt.Models"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    x:Name="InventoryPage">
+
+
+    <ContentPage.Resources>
+        <Converters:ConverterToBgColor x:Key="ConverterToBgColor" />
+        <Converters:ConverterToTextColor x:Key="ConverterToTextColor" />
+    </ContentPage.Resources>
+
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Padding="18,0" BackgroundColor="{StaticResource orangePale}">
+            <Grid ColumnDefinitions="*, *" RowDefinitions="auto">
+                <Label
+                    Grid.ColumnSpan="2"
+                    FontAttributes="Bold"
+                    FontSize="24"
+                    HorizontalOptions="CenterAndExpand"
+                    Text="Inventário"
+                    TextColor="Black"
+                    VerticalTextAlignment="Center" />
+                <Button
+                    Grid.Column="1"
+                    BackgroundColor="Transparent"
+                    Command="{Binding NavAddProductCommand}"
+                    FontSize="20"
+                    HorizontalOptions="End"
+                    Text="+"
+                    WidthRequest="40" />
+            </Grid>
+
             <Label
-                HorizontalOptions="CenterAndExpand"
-                Text="aaaaaaaaaaaa"
-                VerticalOptions="CenterAndExpand" />
+                Padding="0,23,0,61"
+                FontSize="43"
+                HorizontalOptions="Center">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="R$ " />
+                        <Span Text="{Binding TotalValue}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <StackLayout Orientation="Horizontal">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="Adicionado"
+                    VerticalTextAlignment="Center" />
+                <Frame
+                    Padding="14,2"
+                    BackgroundColor="{StaticResource greenStrong}"
+                    CornerRadius="15"
+                    HasShadow="False"
+                    HorizontalOptions="EndAndExpand">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="21"
+                        Text="{Binding ItemCount}"
+                        TextColor="{StaticResource pinkStrong}" />
+                </Frame>
+            </StackLayout>
+
+            <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy}">
+                <CollectionView
+                    x:Name="collectionView"
+                    ItemsSource="{Binding ItemsList}"
+                    SelectedItem="{Binding SelectedProduct}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout
+                                x:DataType="models:Product"
+                                xct:CornerRadiusEffect.CornerRadius="10"
+                                BackgroundColor="{Binding Category, Converter={StaticResource ConverterToBgColor}}">
+                                <SwipeView BackgroundColor="Transparent">
+                                    <SwipeView.LeftItems>
+                                        <SwipeItem
+                                            BackgroundColor="LightBlue"
+                                            Command="{Binding Source={x:Reference Name=InventoryPage}, Path=BindingContext.UpdateItemCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Text="Editar" />
+                                    </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItem
+                                                BackgroundColor="red"
+                                                Command="{Binding Source={x:Reference Name=InventoryPage}, Path=BindingContext.DeleteItemCommand}"
+                                                CommandParameter="{Binding .}"
+                                                Text="Deletar" />
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <Grid
+                                        Padding="4,8"
+                                        ColumnDefinitions="40,*,*"
+                                        RowDefinitions="*,*">
+                                        <Image
+                                            Grid.RowSpan="2"
+                                            Grid.Column="0"
+                                            Margin="2,0,2,0"
+                                            Source="{Binding Image}" />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            FontAttributes="Bold"
+                                            FontSize="15"
+                                            Text="{Binding Name}"
+                                            TextColor="{Binding Category, Converter={StaticResource ConverterToTextColor}}" />
+                                        <Frame
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Padding="6,0"
+                                            BackgroundColor="{StaticResource pinkMedium}"
+                                            CornerRadius="10"
+                                            HasShadow="False"
+                                            HorizontalOptions="Start"
+                                            WidthRequest="17">
+                                            <Label
+                                                FontAttributes="Bold"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Quantity}"
+                                                TextColor="{StaticResource pinkStrong}" />
+                                        </Frame>
+
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="2"
+                                            Margin="0,0,20,0"
+                                            FontAttributes="Bold"
+                                            FontSize="16"
+                                            HorizontalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="R$ " />
+                                                    <Span Text="{Binding Value}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </Grid>
+                                </SwipeView>
+                            </StackLayout>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

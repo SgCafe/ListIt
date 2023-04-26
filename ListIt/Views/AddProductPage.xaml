@@ -1,12 +1,86 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ListIt.Views.AddProductPage">
+<ContentPage
+    x:Class="ListIt.Views.AddProductPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:effects="clr-namespace:ListIt.Effects">
+
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout Padding="22,0" BackgroundColor="{StaticResource orangePale}">
+            <Button
+                BackgroundColor="Transparent"
+                Command="{Binding BackProductPageCommand}"
+                HorizontalOptions="Start"
+                ImageSource="back_simbolo.png"
+                WidthRequest="25" />
+            <Frame
+                Margin="5,0,5,10"
+                Padding="0"
+                CornerRadius="10">
+                <Picker
+                    Title="Escolha uma categoria"
+                    Margin="7,0,0,0"
+                    ItemDisplayBinding="{Binding Category}"
+                    ItemsSource="{Binding CategoriesList}"
+                    SelectedItem="{Binding Categoria}">
+
+                    <Picker.Effects>
+                        <effects:PlainEntry />
+                    </Picker.Effects>
+                </Picker>
+            </Frame>
+
+            <Frame
+                Margin="5,0,5,10"
+                Padding="0"
+                CornerRadius="10">
+                <Entry
+                    Margin="7,0,0,0"
+                    Placeholder="Escreva um nome"
+                    Text="{Binding Nome}">
+                    <Entry.Effects>
+                        <effects:PlainEntry />
+                    </Entry.Effects>
+                </Entry>
+            </Frame>
+
+            <Frame
+                Margin="5,0,5,10"
+                Padding="0"
+                CornerRadius="10">
+                <Entry
+                    Margin="7,0,0,0"
+                    Keyboard="Numeric"
+                    Placeholder="Quantidade"
+                    Text="{Binding Quantidade, StringFormat='{0}'}">
+                    <Entry.Effects>
+                        <effects:PlainEntry />
+                    </Entry.Effects>
+                </Entry>
+            </Frame>
+
+            <Frame
+                Margin="5,0,5,10"
+                Padding="0"
+                CornerRadius="10">
+                <Entry
+                    Margin="7,0,0,0"
+                    Keyboard="Numeric"
+                    Placeholder="Valor"
+                    Text="{Binding Valor}">
+                    <Entry.Effects>
+                        <effects:PlainEntry />
+                    </Entry.Effects>
+                </Entry>
+            </Frame>
+
+            <Button
+                BackgroundColor="Transparent"
+                Command="{Binding SaveProductCommand}"
+                HorizontalOptions="Center"
+                Text="Salvar"
+                TextColor="#A6A6A6" />
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

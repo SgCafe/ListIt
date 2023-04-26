@@ -1,8 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Application xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ListIt.App">
+<Application
+    x:Class="ListIt.App"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <Application.Resources>
-
+        <Color x:Key="orangePale">#FFECE4</Color>
+        <Color x:Key="orangeStrong">#FFCEA1</Color>
+        <Color x:Key="greenPale">#CEEADC</Color>
+        <Color x:Key="greenStrong">#BFF9E5</Color>
+        <Color x:Key="yellowPale">#FDFFE1</Color>
+        <Color x:Key="pinkPale">#FFDACF</Color>
+        <Color x:Key="pinkStrong">#FF8888</Color>
+        <Color x:Key="pinkMedium">#FFD2D2</Color>
+        <Color x:Key="grayPattern">#6A6A6A</Color>
     </Application.Resources>
 </Application>

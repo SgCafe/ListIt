@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ListIt.Viewmodels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace ListIt.Views
         public ProductPage()
         {
             InitializeComponent();
+            BindingContext = new ProductViewmodel();
         }
     }
 }

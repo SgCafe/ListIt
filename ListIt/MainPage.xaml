@@ -3,14 +3,15 @@
     x:Class="ListIt.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:views="clr-namespace:ListIt.Views">
+    xmlns:Views="clr-namespace:ListIt.Views"
+    Shell.NavBarIsVisible="False">
 
     <ShellContent Route="ProductPageShell">
-        <views:ProductPage />
+        <Views:ProductPage />
     </ShellContent>
 
     <ShellContent Route="AddProductShell">
-        <views:AddProductPage />
+        <Views:AddProductPage />
     </ShellContent>
 
 </Shell>
