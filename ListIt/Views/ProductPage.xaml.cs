@@ -18,5 +18,14 @@ namespace ListIt.Views
             InitializeComponent();
             BindingContext = new ProductViewmodel();
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if(BindingContext is ProductViewmodel viewmodel)
+            {
+                viewmodel.ExecuteLoadItemsCommand();
+            }
+        }
     }
 }

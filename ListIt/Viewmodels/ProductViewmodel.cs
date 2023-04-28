@@ -1,4 +1,5 @@
 ﻿using ListIt.Models;
+using ListIt.Repository;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,8 +15,9 @@ namespace ListIt.Viewmodels
     public class ProductViewmodel : BaseViewmodel
     {
         #region  properties
-        private Product product;
+        private readonly IDataRepository<Product> _productrepository;
 
+        private Product product;
         public Product ProductTlg
         {
             get => product;
@@ -36,24 +38,20 @@ namespace ListIt.Viewmodels
             get => _itemsList;
             set => SetProperty(ref _itemsList, value);
         }
-
-        private bool _isBusy = false;
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set => SetProperty(ref _isBusy, value);
-        }
-
         #endregion
 
         #region constructor
         public ProductViewmodel()
         {
+            _productrepository = DependencyService.Get<IDataRepository<Product>>();
             PopulateList();
-            NavAddProductCommand = new Command(() => ExecuteNavAddPageCommand());
-            LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
+
+            NavAddProductCommand = new Command<Product>(ExecuteNavAddPageCommand);
+            LoadItemsCommand = new Command(ExecuteLoadItemsCommand);
             DeleteItemCommand = new Command<Product>(ExecuteDeleteItemCommand);
-            UpdateItemCommand = new Command<Product>((product) => ExecuteUpdateItemCommand(product));
+            UpdateItemCommand = new Command<Product>(ExecuteUpdateItemCommand);
+
+            
         }
         #endregion
 
@@ -93,6 +91,8 @@ namespace ListIt.Viewmodels
             };
 
             ItemsList.CollectionChanged += OnItemsListChanged;
+
+            
         }
 
         private void OnItemsListChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -102,81 +102,73 @@ namespace ListIt.Viewmodels
 
         }
 
-        async Task ExecuteLoadItemsCommand()
+        public async void ExecuteLoadItemsCommand()
         {
-            try
-            {
-                if (IsBusy)
-                {
-                    return;
-                }
-                IsBusy = true;
+            var items = await _productrepository.GetAllAsync();
+            ItemsList.Clear();
 
-                ItemsList.Clear();
-
-                //var items = await App.SQLiteDb.GetAllProductsAsync();
-                //foreach (var item in items)
-                //{
-                //    ItemsList.Add(item);
-                //}
-            }
-            catch (Exception)
+            foreach (var item in items)
             {
-
-            }
-            finally
-            {
-                IsBusy = false;
+                ItemsList.Add(item);
             }
         }
 
-        private async void ExecuteDeleteItemCommand(Product product)
+        private async void ExecuteDeleteItemCommand(Product item)
         {
-            if (product == null)
-            {
-                return;
-            }
-
-            //await App.SQLiteDb.DeleteProductAsync(product.Id);
-            await ExecuteLoadItemsCommand();
+            await _productrepository.DeleteAsync(item);
+            ExecuteLoadItemsCommand();
         }
 
-        private async void ExecuteUpdateItemCommand(Product product)
+        private async void ExecuteUpdateItemCommand(Product item)
         {
             try
             {
-                if (IsBusy) { return; }
-                IsBusy = true;
-
-                //var existingitem = await App.SQLiteDb.GetProductAsync(product.Id);
-
-                await Shell.Current.GoToAsync($"//AddProductShell?parametro_id={product}");
-                //await App.SQLiteDb.UpdateProductAsync(product);
-
+                var SelectedProduct = await _productrepository.UpdateAsync(item);
+                await Shell.Current.GoToAsync($"//AddProductShell?SelectedProduct={item}");
             }
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok!");
             }
-            finally
-            {
-                IsBusy = false;
-            }
-
-            //var existingitem = await App.SQLiteDb.GetProductAsync(id.Id);
-            //if (existingitem != null)
-            //{
-            //    existingitem.Name = product.Name;
-            //    existingitem.Value = product.Value;
-            //    existingitem.Quantity = product.Quantity;
-            //    existingitem.Category = product.Category;
-            //    existingitem.Image = product.Image;
-            //    await Shell.Current.GoToAsync("//AddProductShell");
-            //    await App.SQLiteDb.UpdateProductAsync(id);
-            //}
         }
 
-        private async void ExecuteNavAddPageCommand()
+
+        //private async void ExecuteUpdateItemCommand(Product product)
+        //{
+        //    try   
+        //    {
+        //        if (IsBusy) { return; }
+        //        IsBusy = true;
+
+        //        //var existingitem = await App.SQLiteDb.GetProductAsync(product.Id);
+
+        //        await Shell.Current.GoToAsync($"//AddProductShell?parametro_id={product}");
+        //        //await App.SQLiteDb.UpdateProductAsync(product);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok!");
+        //    }
+        //    finally
+        //    {
+        //        IsBusy = false;
+        //    }
+
+        //    //var existingitem = await App.SQLiteDb.GetProductAsync(id.Id);
+        //    //if (existingitem != null)
+        //    //{
+        //    //    existingitem.Name = product.Name;
+        //    //    existingitem.Value = product.Value;
+        //    //    existingitem.Quantity = product.Quantity;
+        //    //    existingitem.Category = product.Category;
+        //    //    existingitem.Image = product.Image;
+        //    //    await Shell.Current.GoToAsync("//AddProductShell");
+        //    //    await App.SQLiteDb.UpdateProductAsync(id);
+        //    //}
+        //}
+
+        private async void ExecuteNavAddPageCommand(Product item)
         {
             await Shell.Current.GoToAsync("//AddProductShell");
         }

@@ -1,4 +1,5 @@
-﻿using ListIt.Viewmodels;
+﻿using ListIt.Models;
+using ListIt.Viewmodels;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;

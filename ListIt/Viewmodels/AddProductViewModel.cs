@@ -1,4 +1,5 @@
 ﻿using ListIt.Models;
+using ListIt.Repository;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -8,6 +9,7 @@ namespace ListIt.Viewmodels
     internal class AddProductViewModel : BaseViewmodel
     {
         #region properties
+        private readonly IDataRepository<Product> _productRepository;
 
         private ObservableCollection<Product> _categoriesList;
         public ObservableCollection<Product> CategoriesList
@@ -51,9 +53,11 @@ namespace ListIt.Viewmodels
         #region Constructor
         public AddProductViewModel()
         {
+            _productRepository = DependencyService.Get<IDataRepository<Product>>();
             CategoryList();
             BackProductPageCommand = new Command(ExecuteBackProductPageCommand);
             SaveProductCommand = new Command(ExecuteSaveProductCommand);
+            
         }
         #endregion
 
@@ -93,7 +97,6 @@ namespace ListIt.Viewmodels
 
         }
 
-
         private async void ExecuteSaveProductCommand()
         {
             var item = new Product
@@ -103,21 +106,17 @@ namespace ListIt.Viewmodels
                 Value = Valor,
                 Category = Categoria.Category,
                 Image = Categoria.Image,
-
             };
 
-
-            //await App.SQLiteDb.AddProductAsync(newItem);
+            await _productRepository.InsetAsync(item);
             
             Nome = string.Empty;
             Quantidade = null;
             Valor = null;
             Categoria = null;
 
-            await Shell.Current.GoToAsync("//ProductPageShell");
+            ExecuteBackProductPageCommand();
         }
-
-
 
         private async void ExecuteBackProductPageCommand()
         {
